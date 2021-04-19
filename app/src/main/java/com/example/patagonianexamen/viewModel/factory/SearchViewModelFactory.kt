@@ -1,4 +1,4 @@
-package com.example.patagonianexamen.viewModel.viewModelFactory
+package com.example.patagonianexamen.viewModel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
