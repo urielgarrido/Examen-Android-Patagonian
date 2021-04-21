@@ -10,5 +10,5 @@ interface LyricsAPI {
 
     @GET("{artist}/{title}")
     @Headers("Content-Type:application/json")
-    fun getLyrics(@Path("artist") artist: String,@Path("title") title: String): Call<Lyrics>
+    fun getLyrics(@Path("artist") artist: String,@Path("title") title: String): Call<Lyrics?>
 }

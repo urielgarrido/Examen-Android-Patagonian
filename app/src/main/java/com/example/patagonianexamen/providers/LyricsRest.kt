@@ -1,5 +1,6 @@
-package com.example.patagonianexamen.repository
+package com.example.patagonianexamen.providers
 
+import com.example.patagonianexamen.repository.LyricsAPI
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
