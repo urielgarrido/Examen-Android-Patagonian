@@ -37,6 +37,14 @@ class CancionesAdapter(
        return canciones.size
     }
 
+    fun actualizarListaCanciones(canciones: MutableList<Cancion>) {
+        this.canciones.apply {
+            clear()
+            addAll(canciones)
+        }
+        notifyDataSetChanged()
+    }
+
     fun interface CancionClickListener {
         fun onClick(cancion: Cancion)
     }

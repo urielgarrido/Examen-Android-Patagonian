@@ -2,12 +2,13 @@ package com.example.patagonianexamen.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.commit
 import com.example.patagonianexamen.MainApplication
 import com.example.patagonianexamen.R
-import com.example.patagonianexamen.data.Cancion
+import com.example.patagonianexamen.data.CancionEntityRoom
 import com.example.patagonianexamen.data.Lyrics
 import com.example.patagonianexamen.navigation.MainNavigator
 import com.example.patagonianexamen.ui.fragment.BaseFragment
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(), BaseFragment.BaseViewListener, MainNav
             setReorderingAllowed(true)
             add(
                 R.id.fragmentContainerView,
-                SearchFragment.newInstance(MainApplication()),
+                SearchFragment.newInstance(application as MainApplication),
                 SearchFragment::class.java.simpleName
             )
         }
@@ -52,19 +53,19 @@ class MainActivity : AppCompatActivity(), BaseFragment.BaseViewListener, MainNav
             setReorderingAllowed(true)
             replace(
                 R.id.fragmentContainerView,
-                LyricsFragment.newInstance(),
+                LyricsFragment.newInstance(lyrics),
                 LyricsFragment::class.java.simpleName
             )
         }
     }
 
-    override fun goToHistorial(listaCanciones: List<Cancion>) {
+    override fun goToHistorial() {
         supportFragmentManager.commit {
             addToBackStack(null)
             setReorderingAllowed(true)
             replace(
                 R.id.fragmentContainerView,
-                HistoryFragment.newInstance(),
+                HistoryFragment.newInstance(application as MainApplication),
                 HistoryFragment::class.java.simpleName
             )
         }
@@ -83,7 +84,15 @@ class MainActivity : AppCompatActivity(), BaseFragment.BaseViewListener, MainNav
     }
 
     override fun updateToolbarTitle(title: String) {
-        TODO("Not yet implemented")
+        supportActionBar?.title = title
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+        }
+
+        return super.onOptionsItemSelected(item)
     }
     
     override fun onBackPressed() {

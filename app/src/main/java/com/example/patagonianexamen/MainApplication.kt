@@ -8,5 +8,5 @@ import com.example.patagonianexamen.repository.RepositoryImpl
 class MainApplication: Application() {
 
     val database by lazy { CancionRoomDatabase.getDatabase(this) }
-    val repository by lazy { RepositoryImpl(LyricsRest, database.cancionDao()) }
+    val repository by lazy { RepositoryImpl(database.cancionDao()) }
 }

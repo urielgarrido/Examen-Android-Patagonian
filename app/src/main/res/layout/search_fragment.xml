@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,6 +56,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
+            android:visibility="invisible"
             app:cardCornerRadius="5dp"
             app:cardElevation="5dp"
             app:contentPadding="10dp"
@@ -73,8 +74,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:textColor="@color/cardview_dark_background"
                     android:text="@string/ultimo_buscado"
+                    android:textColor="@color/cardview_dark_background"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -83,49 +84,46 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <RelativeLayout
+                    android:id="@+id/ultimo_buscado_relativeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/ultimo_buscado_relativeLayout"
-                    android:gravity="center_horizontal"
                     android:layout_marginTop="18dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ultimo_buscado_textView" >
+                    app:layout_constraintTop_toBottomOf="@+id/ultimo_buscado_textView">
 
                     <ImageView
+                        android:id="@+id/imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_text"
-                        android:id="@+id/imageView"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@id/artista_ultimo_buscado_textView"
                         android:adjustViewBounds="true"
                         android:cropToPadding="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/artista_ultimo_buscado_textView"
-                        />
+                        android:src="@drawable/ic_text" />
 
                     <TextView
                         android:id="@+id/artista_ultimo_buscado_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/artista_ultimo_buscado"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
                         android:textColor="@color/purple_500"
-                        />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/cancion_ultimo_buscado_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
                         android:layout_below="@id/artista_ultimo_buscado_textView"
+                        android:layout_marginTop="5dp"
                         android:text="@string/cancion_ultimo_buscado"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
                         android:textColor="@color/purple_500"
-            />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                 </RelativeLayout>
 

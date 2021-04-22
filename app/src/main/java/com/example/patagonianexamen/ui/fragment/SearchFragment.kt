@@ -1,7 +1,7 @@
 package com.example.patagonianexamen.ui.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +12,14 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.viewModels
 import com.example.patagonianexamen.MainApplication
 import com.example.patagonianexamen.R
-import com.example.patagonianexamen.data.Cancion
-import com.example.patagonianexamen.viewModel.SearchViewModel
-import com.example.patagonianexamen.viewModel.factory.SearchViewModelFactory
+import com.example.patagonianexamen.data.CancionEntityRoom
+import com.example.patagonianexamen.viewmodels.SearchViewModel
+import com.example.patagonianexamen.viewmodels.factory.SearchViewModelFactory
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 class SearchFragment(application: MainApplication) : BaseFragment() {
 
@@ -30,7 +34,7 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
     private lateinit var verHistorialButton: Button
 
     private val searchViewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(application.repository )
+        SearchViewModelFactory(application.repository)
     }
 
     companion object {
@@ -44,34 +48,43 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
         val view = inflater.inflate(R.layout.search_fragment, container, false)
 
         configurarUI(view)
+        actualizarTituloToolbar(getString(R.string.search_title_fragment))
         bindViewModel()
         return view
     }
 
     private fun bindViewModel() {
-        searchViewModel.ultimaCancion?.observe(viewLifecycleOwner, {
+        searchViewModel.ultimaCancionEntityRoom?.observe(viewLifecycleOwner, {
             cargarUltimaCancion(it)
+        })
+
+        searchViewModel.showLoading.observe(viewLifecycleOwner, {
+            showLoading(it)
         })
     }
 
-    private fun cargarUltimaCancion(ultimaCancion: Cancion?) {
-        ultimoBuscadoContainer.visibility = View.VISIBLE
+    private fun cargarUltimaCancion(ultimaCancion: CancionEntityRoom?) {
         if (ultimaCancion != null) {
+            ultimoBuscadoContainer.visibility = View.VISIBLE
             ultimoBuscadoArtistaTextView.text = ultimaCancion.artist
             ultimoBuscadoCancionTextView.text = ultimaCancion.song
         }
         ultimoBuscadoRelativeLayout.setOnClickListener {
             if (ultimaCancion != null) {
-               val res = searchViewModel.getLyricFromApi(ultimaCancion.artist, ultimaCancion.song)
-
-                if (res != null){
-                    navigation?.goToLyrics(res)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val res =
+                        searchViewModel.getLyricFromApi(ultimaCancion.artist, ultimaCancion.song)
+                    if (res != null) {
+                        activity?.runOnUiThread {
+                            navigation?.goToLyrics(res)
+                        }
+                    }
                 }
             }
         }
 
         verHistorialButton.setOnClickListener {
-
+            navigation?.goToHistorial()
         }
     }
 
@@ -90,8 +103,40 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
 
     private fun setOnClickListeners() {
         buscarButton.setOnClickListener {
+            val artista = artistaEditText.text.toString()
+            val song = cancionEditText.text.toString()
+            CoroutineScope(Dispatchers.IO).launch {
+                val lyrics = searchViewModel.getLyricFromApi(artista, song)
+                if (lyrics != null) {
+                    searchViewModel.insertCancionRoom(
+                        CancionEntityRoom(
+                            artist = artista,
+                            song = song
+                        )
+                    )
+                    activity?.runOnUiThread {
+                        navigation?.goToLyrics(lyrics)
+                    }
+                } else {
+                    activity?.runOnUiThread {
+                        mostrarAlertDialogError()
+                    }
+                }
 
+            }
         }
+    }
+
+    private fun mostrarAlertDialogError() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.letra_no_encontrada))
+            .setMessage("No lyrics found")
+            .setPositiveButton(
+                getString(R.string.aceptar)
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
 }

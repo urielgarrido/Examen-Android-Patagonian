@@ -1,5 +1,13 @@
 package com.example.patagonianexamen.data
 
-data class Lyrics(val lyrics: String, val error: String? = null){
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class Lyrics(
+    @SerializedName("lyrics") var lyrics: String,
+    @SerializedName("error") var error: String? = null
+): Parcelable{
 
 }
