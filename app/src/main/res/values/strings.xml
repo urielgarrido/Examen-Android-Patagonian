@@ -103,4 +103,5 @@
     <string name="aceptar">Aceptar</string>
     <string name="lyrics_title_fragment">Letra</string>
     <string name="search_title_fragment">Buscar letra</string>
+    <string name="no_hay_internet">No tienes internet</string>
 </resources>

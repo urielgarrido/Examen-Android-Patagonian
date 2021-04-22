@@ -7,4 +7,8 @@ import androidx.lifecycle.ViewModel
 open class BaseViewModel : ViewModel() {
     protected val _showLoading = MutableLiveData<Boolean>()
     val showLoading: LiveData<Boolean> = _showLoading
+
+    protected val _isNetOn = MutableLiveData<Boolean>()
+    val isNetOn: LiveData<Boolean> = _isNetOn
+
 }

@@ -28,4 +28,8 @@ class SearchViewModel(
         }
     }
 
+    fun isOnline(online: Boolean) {
+        _isNetOn.postValue(online)
+    }
+
 }

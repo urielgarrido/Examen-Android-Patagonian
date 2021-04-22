@@ -1,6 +1,11 @@
 package com.example.patagonianexamen.ui.fragment
 
 import android.app.AlertDialog
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkInfo
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +14,7 @@ import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.viewModels
 import com.example.patagonianexamen.MainApplication
 import com.example.patagonianexamen.R
@@ -19,9 +25,11 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
+
 
 class SearchFragment(application: MainApplication) : BaseFragment() {
+
+    private lateinit var noHayConexionTextView: TextView
 
     private lateinit var artistaEditText: TextInputEditText
     private lateinit var cancionEditText: TextInputEditText
@@ -37,8 +45,16 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
         SearchViewModelFactory(application.repository)
     }
 
+    private var connectivityManager: ConnectivityManager? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+
     companion object {
         fun newInstance(application: MainApplication) = SearchFragment(application)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isNetDisponible()
     }
 
     override fun onCreateView(
@@ -53,6 +69,21 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        clearEditText()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        connectivityManager?.unregisterNetworkCallback(networkCallback!!)
+    }
+
+    private fun clearEditText() {
+        artistaEditText.text?.clear()
+        cancionEditText.text?.clear()
+    }
+
     private fun bindViewModel() {
         searchViewModel.ultimaCancionEntityRoom?.observe(viewLifecycleOwner, {
             cargarUltimaCancion(it)
@@ -61,6 +92,22 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
         searchViewModel.showLoading.observe(viewLifecycleOwner, {
             showLoading(it)
         })
+
+        searchViewModel.isNetOn.observe(viewLifecycleOwner, {
+            disableOrEnableButtons(it)
+        })
+    }
+
+    private fun disableOrEnableButtons(online: Boolean) {
+        if (online) {
+            ultimoBuscadoRelativeLayout.isEnabled = true
+            buscarButton.isEnabled = true
+            noHayConexionTextView.visibility = View.GONE
+        } else {
+            ultimoBuscadoRelativeLayout.isEnabled = false
+            buscarButton.isEnabled = false
+            noHayConexionTextView.visibility = View.VISIBLE
+        }
     }
 
     private fun cargarUltimaCancion(ultimaCancion: CancionEntityRoom?) {
@@ -89,6 +136,7 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
     }
 
     private fun configurarUI(view: View) {
+        noHayConexionTextView = view.findViewById(R.id.no_hay_conexion_textView)
         artistaEditText = view.findViewById(R.id.artistaEditText)
         cancionEditText = view.findViewById(R.id.cancionEditText)
         buscarButton = view.findViewById(R.id.buscar_button)
@@ -137,6 +185,28 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun isNetDisponible() {
+        connectivityManager =
+            activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+
+        val request: NetworkRequest = NetworkRequest.Builder().build()
+
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                searchViewModel.isOnline(false)
+            }
+
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                searchViewModel.isOnline(true)
+            }
+        }
+
+        connectivityManager?.registerNetworkCallback(request, networkCallback!!)
     }
 
 }

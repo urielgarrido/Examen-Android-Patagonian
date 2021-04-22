@@ -17,20 +17,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/no_hay_conexion_textView">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/artistaEditText"
                 android:layout_width="match_parent"
-                android:maxLines="1"
-                android:inputType="text"
-                android:imeOptions="actionNext"
                 android:layout_height="wrap_content"
-                android:hint="@string/artista" />
+                android:hint="@string/artista"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -158,6 +158,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cancionInutLayout" />
+
+        <TextView
+            android:id="@+id/no_hay_conexion_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/design_default_color_error"
+            android:text="@string/no_hay_internet"
+            android:textAlignment="center"
+            android:textColor="@color/design_default_color_background"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
