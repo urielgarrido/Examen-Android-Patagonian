@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PatagonianEXamen</string>
+    <string name="app_name">PatagonianApp</string>
     <string name="artista">Escribe el artista que buscas</string>
     <string name="cancion">Escribe la canción que buscas</string>
     <string name="ultimo_buscado">Último buscado</string>
