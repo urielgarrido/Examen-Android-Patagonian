@@ -22,9 +22,9 @@ class SearchViewModel(
     }
 
     suspend fun getLyricFromApi(artist: String, song: String): Lyrics?{
-        _showLoading.postValue(true)
+        setShowLoading(true)
         return repository.obtenerLyricFromApi(artist, song).also {
-            _showLoading.postValue(false)
+            setShowLoading(false)
         }
     }
 

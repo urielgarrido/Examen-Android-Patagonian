@@ -11,4 +11,7 @@ open class BaseViewModel : ViewModel() {
     protected val _isNetOn = MutableLiveData<Boolean>()
     val isNetOn: LiveData<Boolean> = _isNetOn
 
+    fun setShowLoading(show: Boolean){
+        _showLoading.postValue(show)
+    }
 }

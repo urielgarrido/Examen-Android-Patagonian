@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.patagonianexamen.R
 import com.example.patagonianexamen.data.Cancion
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CancionesAdapter(
     val listener: CancionClickListener): RecyclerView.Adapter<CancionesAdapter.CancionesViewHolder>() {
@@ -29,8 +31,8 @@ class CancionesAdapter(
 
     override fun onBindViewHolder(holder: CancionesViewHolder, position: Int) {
         val cancion: Cancion = canciones[position]
-        holder.artistTextView.text = cancion.artist
-        holder.cancionTextView.text = cancion.song
+        holder.artistTextView.text = cancion.artist.toUpperCase(Locale.getDefault())
+        holder.cancionTextView.text = cancion.song.toUpperCase(Locale.getDefault())
     }
 
     override fun getItemCount(): Int {

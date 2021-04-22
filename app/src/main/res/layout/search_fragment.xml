@@ -105,8 +105,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_toEndOf="@id/artista_ultimo_buscado_textView"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toStartOf="@id/artista_ultimo_buscado_textView"
                         android:adjustViewBounds="true"
                         android:cropToPadding="true"
                         android:src="@drawable/ic_text" />

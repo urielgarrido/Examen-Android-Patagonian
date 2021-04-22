@@ -1,5 +1,6 @@
 package com.example.patagonianexamen.ui.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.example.patagonianexamen.viewmodels.factory.HistoryViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class HistoryFragment(application: MainApplication) : BaseFragment() {
 
@@ -87,12 +89,31 @@ class HistoryFragment(application: MainApplication) : BaseFragment() {
         )
     }
 
+    private fun mostrarAlertiDialogSinConexion(){
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.sin_conexion))
+            .setMessage(getString(R.string.no_hay_internet))
+            .setPositiveButton(
+                getString(R.string.aceptar)
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     private fun onCancionClicked(cancion: Cancion) {
         CoroutineScope(Dispatchers.IO).launch {
-            val lyricRes = historyViewModel.getLyricFromApi(cancion.artist, cancion.song)
-            if (lyricRes != null) {
+            try {
+                val lyricRes = historyViewModel.getLyricFromApi(cancion.artist, cancion.song)
+                if (lyricRes != null) {
+                    activity?.runOnUiThread {
+                        navigation?.goToLyrics(lyricRes)
+                    }
+                }
+            }catch (exception: Exception){
                 activity?.runOnUiThread {
-                navigation?.goToLyrics(lyricRes)
+                    historyViewModel.setShowLoading(false)
+                    mostrarAlertiDialogSinConexion()
                 }
             }
 

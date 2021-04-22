@@ -25,6 +25,8 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.*
 
 
 class SearchFragment(application: MainApplication) : BaseFragment() {
@@ -74,8 +76,8 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
         clearEditText()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         connectivityManager?.unregisterNetworkCallback(networkCallback!!)
     }
 
@@ -113,19 +115,27 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
     private fun cargarUltimaCancion(ultimaCancion: CancionEntityRoom?) {
         if (ultimaCancion != null) {
             ultimoBuscadoContainer.visibility = View.VISIBLE
-            ultimoBuscadoArtistaTextView.text = ultimaCancion.artist
-            ultimoBuscadoCancionTextView.text = ultimaCancion.song
+            ultimoBuscadoArtistaTextView.text = ultimaCancion.artist.toUpperCase(Locale.getDefault())
+            ultimoBuscadoCancionTextView.text = ultimaCancion.song.toUpperCase(Locale.getDefault())
         }
         ultimoBuscadoRelativeLayout.setOnClickListener {
             if (ultimaCancion != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val res =
-                        searchViewModel.getLyricFromApi(ultimaCancion.artist, ultimaCancion.song)
-                    if (res != null) {
+                    try {
+                        val res =
+                            searchViewModel.getLyricFromApi(ultimaCancion.artist, ultimaCancion.song)
+                        if (res != null) {
+                            activity?.runOnUiThread {
+                                navigation?.goToLyrics(res)
+                            }
+                        }
+                    }catch (exception: Exception){
                         activity?.runOnUiThread {
-                            navigation?.goToLyrics(res)
+                            searchViewModel.setShowLoading(false)
+                            mostrarAlertiDialogSinConexion()
                         }
                     }
+
                 }
             }
         }
@@ -154,25 +164,46 @@ class SearchFragment(application: MainApplication) : BaseFragment() {
             val artista = artistaEditText.text.toString()
             val song = cancionEditText.text.toString()
             CoroutineScope(Dispatchers.IO).launch {
-                val lyrics = searchViewModel.getLyricFromApi(artista, song)
-                if (lyrics != null) {
-                    searchViewModel.insertCancionRoom(
-                        CancionEntityRoom(
-                            artist = artista,
-                            song = song
+                try {
+                    val lyrics = searchViewModel.getLyricFromApi(artista, song)
+                    if (lyrics != null) {
+                        searchViewModel.insertCancionRoom(
+                            CancionEntityRoom(
+                                artist = artista,
+                                song = song
+                            )
                         )
-                    )
-                    activity?.runOnUiThread {
-                        navigation?.goToLyrics(lyrics)
+                        activity?.runOnUiThread {
+                            navigation?.goToLyrics(lyrics)
+                        }
+                    } else {
+                        activity?.runOnUiThread {
+                            mostrarAlertDialogError()
+                        }
                     }
-                } else {
+                }catch (exception: Exception){
                     activity?.runOnUiThread {
-                        mostrarAlertDialogError()
+                        searchViewModel.setShowLoading(false)
+                        mostrarAlertiDialogSinConexion()
                     }
                 }
 
             }
         }
+    }
+
+    private fun mostrarAlertiDialogSinConexion(){
+        noHayConexionTextView.visibility = View.VISIBLE
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.sin_conexion))
+            .setMessage(getString(R.string.no_hay_internet))
+            .setPositiveButton(
+                getString(R.string.aceptar)
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun mostrarAlertDialogError() {
